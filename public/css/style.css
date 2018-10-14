@@ -1,0 +1,327 @@
+.page-content {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  overflow: scroll;
+}
+.page-wrapped {
+  width: 2000px;
+  height: 2000px;
+  position: relative;
+}
+.page-map {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.main-city {
+  height: 40px;
+  width: 40px;
+  background-color: #0dbb0d;
+  border-radius: 50%;
+  display: block;  
+  position: absolute;
+  cursor: pointer;
+  z-index: 999;
+}
+.main-city-name {
+  height: auto;
+  width: auto;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: block;  
+  position: absolute;
+  font-size: 13px;
+  padding: 3px 5px;
+  z-index: 9999;
+}
+.other-city {
+  height: 40px;
+  width: 40px;
+  background-color: red;
+  border-radius: 50%;
+  display: block;  
+  position: absolute;
+  cursor: pointer;
+  z-index: 999;
+}
+.other-city-name {
+  height: auto;
+  width: auto;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: block;  
+  position: absolute;
+  font-size: 13px;
+  padding: 3px 5px;
+  z-index: 9999;
+}
+
+.main {
+  width: 100%;
+}
+
+.webcams-item {
+  margin: 10px 0 0 30px !important;
+  position: absolute;
+  border: 1px solid #ccc;
+  width: auto;
+  height: auto;
+  z-index: 9999;
+}
+
+.webcams-item .image {
+  width: 120px; 
+}
+
+.webcams-item .title {
+  
+}
+.panel-button {
+  font-family: 'Noto Sans', Arial;
+  background: #f2f2f2;
+  border-bottom: 1px solid #B6B4B6;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 24px;  
+  height: 24px;  
+  border: 1px solid #f2f2f2;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 0;
+}
+#zoom_in {
+  top: 10px;
+}
+#zoom_out {
+  top: 40px;
+}
+.icon {
+  width: 100%;
+  height: 100%;
+  display: block;
+  margin: 0;
+  padding: 0;
+  background-position: center !important;  
+} 
+.icon-zoom-in {
+  background: url(img/ic-zoom-in.svg) no-repeat 0px 0px;
+} 
+.icon-zoom-out {
+  background: url(img/ic-zoom-out.svg) no-repeat 0px 0px;
+} 
+.icon-close {
+} 
+.icon-loading {
+  background: url(img/loader.gif) no-repeat 0px 0px;
+} 
+
+.line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    stroke: #000;
+    stroke-width: 2px;
+}
+
+#modalfade {
+    display: none;
+    background: #e5e5e5;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .80;
+    z-index: 9998;
+}
+.win-popup-message {
+    display: none;
+    z-index: 229999;
+    position: fixed;
+    width: 600px;
+    height: 400px;
+    top: calc(50% - 200px);
+    left: calc(50% - 300px);
+    font-size: 12px;
+    color: #666;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 5px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    opacity: 1; 
+}
+.win-popup-message-header {
+    width: 580px;
+    height: 20px;
+    padding: 8px 10px;
+    text-align: center;
+    background-color: #eeeeee;
+    background-image: -moz-linear-gradient(#fafafa, #eee);
+    background-image: -webkit-linear-gradient(#fafafa, #eee);
+    background-image: linear-gradient(#fafafa, #eee);
+    background-repeat: repeat-x;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+}
+.win-popup-message-header .close-button {
+    position: absolute;
+    top: 5px;
+    left: 560px;
+}
+.win-popup-message-header .select-menu-message-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: red;
+    text-shadow: 0 1px 0 #fff;
+}
+.win-popup-message-list {
+    position: relative;
+    width: 100%;
+    min-height: 160px;
+    width: 600px;
+    height: 366px;
+    overflow: auto;
+}
+.win-popup-message-list .loading {
+    position: absolute;
+    left: 270px;
+    top: 140px;
+    width: 48px;
+    height: 48px;
+    background-size: 100%;
+}
+.search-header {
+    padding: 0 .70588235em 0 .70588235em;
+    margin-bottom: 0;  
+    margin-top: 10px;
+    padding-left: .70588235em;
+    position: relative;
+    width: 100%;
+    display: block;
+    height: 24px;
+}
+.section-header-main {
+    margin: 0 0 .26086957em;
+    font-size: 1.17647059em;
+    line-height: 1.35;
+    float: left;
+    color: #00355f;
+}
+.title-departure {
+
+}    
+.title-city-text {
+  line-height: 1;
+  color: #00355f;
+}  
+.secondary {
+  line-height: 1;
+  color: #536d83;
+  margin-left: 15px;
+}  
+.flight-listing-container {
+  margin-top: 10px;
+  width: 100%;
+  display: block;
+}
+.results-list {
+  margin-bottom: .70588235em;
+  margin-left: 0;
+  border-radius: 0 0 .17647059em .17647059em;
+  padding: 10px;
+  list-style: none;
+  color: #1f1f1f;
+
+}
+.result-list-item {
+  width: 100%;
+}
+.grid-container {
+  width: 100%;
+  height: 40px;  
+}
+.number-content {
+  font-weight: 600;
+  display: inline-block;
+  width: 50px;
+  height: 100%;
+  vertical-align: top;
+}
+.time-content {
+  font-weight: 500;
+  display: inline-block;
+  width: 100px;
+  height: 100%;
+  vertical-align: top;
+}
+.duration-content {
+  font-weight: 500;
+  display: inline-block;
+  width: 50px;
+  height: 100%;
+  vertical-align: top;
+}
+.airline-content {
+  font-weight: 500;
+  display: inline-block;
+  width: 250px;
+  height: 100%;
+  vertical-align: top;
+} 
+.button-content {
+	position: fixed;
+	  z-index: 999;
+	  left: 10px;
+	  top: 70px;
+	  width: 118px;
+	  height: 20px;
+	  border: 1px solid #333;
+	  border-radius: 2px;
+	  padding: 10px 15px;	  
+	  background: #ccc;
+	cursor: pointer;
+  }
+  .button-content span {
+  
+  }
+  .change-city-list {
+	margin: 30px 80px;
+	font-size: 16px;
+  }
+  .change-city-item {
+	display: block;
+	margin: 5px 0;
+  }
+  .change-city-item label {
+	margin-left: 20px;
+  }  
+  .change-city-button {
+	margin: 40px;
+  }
+  .submit-button {
+	padding: 7px 16px 8px;
+	margin: 0;
+	font-size: 12.5px;
+	display: inline-block;
+	cursor: pointer;
+	vertical-align: top;
+	line-height: 15px;
+	text-align: center;
+	text-decoration: none;
+	background-color: #5181b8;
+	color: #fff;
+	border: 0;
+	border-radius: 4px;
+	box-sizing: border-box
+  }  
