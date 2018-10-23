@@ -41,8 +41,9 @@ exports.index = function (req, res) {
 	var queryData = URL.parse(req.url, true).query;
 	var showId = queryData.showId ? queryData.showId : null;
 	var imageUrl = 'https://webcams.qldtraffic.qld.gov.au/Gold_Coast/bundall-ashmore-south.jpg'
-	detect(imageUrl);	
-	//console.log("Size of prediction "+pred.length);	
+	
+	
+	
 	async.series( [
 
 		function( chainCallback ){								
@@ -87,6 +88,13 @@ exports.index = function (req, res) {
         },
         // Main webCams 
 		function( chainCallback ){								
+			// Performing detection upon image
+			detect(imageUrl).then(predictions => {
+				//console.log("Data to send with pred: "+predictions.length);
+				info.main['detecResult'] = '' + predictions.length;
+				//chainCallback();
+			});
+
 
 			info.main['nearby'] = info.main.coordinates.lat+','+info.main.coordinates.long+',15';
 
@@ -113,6 +121,18 @@ exports.index = function (req, res) {
 			});
 
 		},
+		// Performing detection upon image
+		// function(chainCallback){
+		// 	// var pred = detect(imageUrl);	
+		// 	// console.log("Data to send with pred: "+pred);
+		// 	detect(imageUrl).then(predictions => {
+		// 		//console.log("Data to send with pred: "+predictions.length);
+		// 		info.main['detecResult'] = predictions.length;
+		// 		chainCallback();
+		// 	});
+			
+		// },
+		// Resolving error
 		function( chainCallback ){
 
 			res.render('home', {
@@ -129,24 +149,27 @@ exports.index = function (req, res) {
 // 	Tensorflow requires usage of Canvas, and Canvas require node -v 8.12 for
 //	stable work. MAKE SURE WE FIX IT BEFORE RUNNING
 async function detect(imageUrl) { 	
-	// Load the model.
 	console.log('Performing prediction: ');
 	var model = await mobilenet.load();		
 	const canvas = createCanvas(299, 299);	
 	const ctx = canvas.getContext('2d');	
 	const img = new Image();	
 	img.src = imageUrl;
-	img.onload = () => {
-		ctx.drawImage(img, 0, 0);		
-		var input = tf.fromPixels(canvas);
-		//predictions = model.classify(input);		
-		model.classify(input).then(predictions => {
-			console.log("Size of prediction "+predictions.length);
-			// console.log('Predictions: ');
-			// console.log(predictions);
-			// return predictions;
-		});
-	};	
+	return new Promise(function(resolve, reject) {
+		// Load the model.		
+		img.onload = () => {
+			ctx.drawImage(img, 0, 0);		
+			var input = tf.fromPixels(canvas);
+			//predictions = model.classify(input);		
+			model.classify(input).then(predictions => {
+				console.log("Size of prediction "+predictions.length);
+				resolve(predictions);
+				// console.log('Predictions: ');
+				// console.log(predictions);
+				// return predictions;
+			});
+		};	
+	})
 }		
 
 function get_city(city, callback) {

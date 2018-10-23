@@ -91,10 +91,8 @@ function init_maps() {
 		origin: new google.maps.Point(0, 0),    	
 		anchor: new google.maps.Point(12, 12)		
 	};
-		
-	container = document.getElementById('map');	
-	// init();
-	// return
+	console.log('Getting detection: ' + info.main.detection);	
+	container = document.getElementById('map');		
 	async.series([
 		// 
 		function(callback) {
@@ -177,9 +175,9 @@ function init_maps() {
 					//console.log(lat1, latitude, lat2, lng1, longitude, lng2, elemOverlays[i].webcamId);
 					//console.log(lat_min, latitude, lat_max, lng_min, longitude, lng_max, elemOverlays[i].webcamId);
 
-					if (latitude > lat_min && latitude < lat_max && longitude > lng_min && longitude < lng_max) {
-						open_webcam(elemOverlays[i].webcamId, elemOverlays[i].webcamTitle);
-					}
+					// if (latitude > lat_min && latitude < lat_max && longitude > lng_min && longitude < lng_max) {
+					// 	open_webcam(elemOverlays[i].webcamId, elemOverlays[i].webcamTitle);
+					// }
 
 				}
 
@@ -189,20 +187,18 @@ function init_maps() {
 				callback();
 			}, 500);	
 		},		
+		// Create a load
+		// Receiving information from server.		
+		function(callback) { 
+			console.log('Getting detection: ' + info.main.detection);
+				
+		},
 		// Calls Building Map		
 		function(callback) { 
 	
 			build_map(callback);		
 
-		},
-
-		// Create a load
-		// Calls Building Map		
-		function(callback) { 
-			console.log('Entering init');
-			init();
-				
-		}
+		}		
 	
 	]);
 }	
