@@ -207,6 +207,8 @@ function init_maps() {
 	]);
 }	
 
+
+
 // ---------------------------------------------- 
 // Perform map building with series of async requests
 //    Marker/ City/ Webcam

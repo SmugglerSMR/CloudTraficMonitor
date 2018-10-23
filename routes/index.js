@@ -15,8 +15,8 @@ var CITY = [ 	{ name: 'Mackay',   ps: 'right' },
 				// { name: 'Townsvile', ps: 'bottom' },	
 				// { name: 'Mackay',   ps: 'top' },
 				// { name: 'Toowoomba',   ps: 'bottom' },
-				// { name: 'Gold Coast',   ps: 'right' },
-				// { name: 'Longreach',   ps: 'bottom' },
+				{ name: 'Gold Coast',   ps: 'right' },
+				{ name: 'Longreach',   ps: 'bottom' },
 				// { name: 'Mount Isa',   ps: 'bottom' },
 				// { name: 'Gladstone',   ps: 'right' },
 				// { name: 'Cairns',   ps: 'top' },
@@ -25,6 +25,10 @@ var CITY = [ 	{ name: 'Mackay',   ps: 'right' },
 
 var tf = require("@tensorflow/tfjs");
 require('@tensorflow/tfjs-node');
+global.fetch = require('node-fetch')
+var mobilenet = require('@tensorflow-models/mobilenet')
+var { createCanvas, Image } = require('canvas')
+
 var util = tf.util;
 var tensor2d = tf.tensor2d
 
@@ -36,8 +40,9 @@ exports.index = function (req, res) {
 
 	var queryData = URL.parse(req.url, true).query;
 	var showId = queryData.showId ? queryData.showId : null;
-	init();
-	return;
+	var imageUrl = 'https://webcams.qldtraffic.qld.gov.au/Gold_Coast/bundall-ashmore-south.jpg'
+	detect(imageUrl);	
+	//console.log("Size of prediction "+pred.length);	
 	async.series( [
 
 		function( chainCallback ){								
@@ -45,39 +50,38 @@ exports.index = function (req, res) {
 			info.main['name'] = MAIN_CITY.name;
 			info.main['ps'] = MAIN_CITY.ps;
 
-			Expedia.typeahead( MAIN_CITY.name, function(rez){  
-
-						if (rez) {
-							for (var i=0; i<rez.length; i++) {
-								if (rez[i].type == 'MULTICITY') {
-									info.main['displayName'] = rez[i].regionNames['displayName'];
-									info.main['fullName'] = rez[i].regionNames['fullName'];
-									info.main['lastSearchName'] = rez[i].regionNames['lastSearchName'];
-									info.main['shortName'] = rez[i].regionNames['displayName'];	
-									info.main['coordinates'] = rez[i].coordinates;
-									info.main['airport'] = rez[i].hierarchyInfo.airport.airportCode;
-									break;
-								}
-								else if (rez[i].type == 'AIRPORT') {
-									info.main['displayName'] = rez[i].regionNames['displayName'];
-									info.main['fullName'] = rez[i].regionNames['fullName'];
-									info.main['lastSearchName'] = rez[i].regionNames['lastSearchName'];
-									info.main['shortName'] = rez[i].regionNames['displayName'];	
-									info.main['coordinates'] = rez[i].coordinates;
-									info.main['airport'] = rez[i].hierarchyInfo.airport.airportCode;
-								}
-							}
-							chainCallback();
-						}	
-						else {
-							var x = Expedia.def_(MAIN_CITY.name);
-							info.main['displayName'] = x['displayName'];
-							info.main['fullName'] = x['fullName'];
-							info.main['lastSearchName'] = x['lastSearchName'];
-							info.main['shortName'] = x['displayName'];	
-							info.main['coordinates'] = x.coordinates;
-							info.main['airport'] = x.airport;
+			Expedia.typeahead( MAIN_CITY.name, function(rez){
+				if (rez) {
+					for (var i=0; i<rez.length; i++) {
+						if (rez[i].type == 'MULTICITY') {
+							info.main['displayName'] = rez[i].regionNames['displayName'];
+							info.main['fullName'] = rez[i].regionNames['fullName'];
+							info.main['lastSearchName'] = rez[i].regionNames['lastSearchName'];
+							info.main['shortName'] = rez[i].regionNames['displayName'];	
+							info.main['coordinates'] = rez[i].coordinates;
+							info.main['airport'] = rez[i].hierarchyInfo.airport.airportCode;
+							break;
 						}
+						else if (rez[i].type == 'AIRPORT') {
+							info.main['displayName'] = rez[i].regionNames['displayName'];
+							info.main['fullName'] = rez[i].regionNames['fullName'];
+							info.main['lastSearchName'] = rez[i].regionNames['lastSearchName'];
+							info.main['shortName'] = rez[i].regionNames['displayName'];	
+							info.main['coordinates'] = rez[i].coordinates;
+							info.main['airport'] = rez[i].hierarchyInfo.airport.airportCode;
+						}
+					}
+					chainCallback();
+				}	
+				else {
+					var x = Expedia.def_(MAIN_CITY.name);
+					info.main['displayName'] = x['displayName'];
+					info.main['fullName'] = x['fullName'];
+					info.main['lastSearchName'] = x['lastSearchName'];
+					info.main['shortName'] = x['displayName'];	
+					info.main['coordinates'] = x.coordinates;
+					info.main['airport'] = x.airport;
+				}
 
 			});
         },
@@ -121,23 +125,29 @@ exports.index = function (req, res) {
 	]);
 };
 
-async function init() { 
-	
+// Determine number of people
+// 	Tensorflow requires usage of Canvas, and Canvas require node -v 8.12 for
+//	stable work. MAKE SURE WE FIX IT BEFORE RUNNING
+async function detect(imageUrl) { 	
 	// Load the model.
 	console.log('Performing prediction: ');
-	const mobilenet = await tf.loadModel(
-		'https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json');
-
-		
-	//const model = await mobilenet.load();
-	var img = 'https://webcams.qldtraffic.qld.gov.au/Metropolitan/Archerfield_Ipswich_Mwy_sth.jpg'
-	// Classify the image.
-	const predictions = await mobilenet.classify(img);
-
-	console.log('Predictions: ');
-	console.log(predictions);
-		
-}
+	var model = await mobilenet.load();		
+	const canvas = createCanvas(299, 299);	
+	const ctx = canvas.getContext('2d');	
+	const img = new Image();	
+	img.src = imageUrl;
+	img.onload = () => {
+		ctx.drawImage(img, 0, 0);		
+		var input = tf.fromPixels(canvas);
+		//predictions = model.classify(input);		
+		model.classify(input).then(predictions => {
+			console.log("Size of prediction "+predictions.length);
+			// console.log('Predictions: ');
+			// console.log(predictions);
+			// return predictions;
+		});
+	};	
+}		
 
 function get_city(city, callback) {
 
