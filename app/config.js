@@ -5,16 +5,16 @@ var cfg = {
 		PORT: '3000',
 		DEFAULT_COOKIES_DOMAIN: '',		
 		WEBCAMS: {
-			appKey: 'umj4LLmXrnmshs0aRT86MMosAlHIp1WhH0Njsnz8WgKzEQEAyb'	
+			appKey: '3e83add325cbb69ac4d8e5bf433d770b'	
 		},
 		GOOGLE_MAPS_KEY: 'AIzaSyBXQROV5YMCERGIIuwxrmaZbBl_Wm4Dy5U'
 	},
 	'global':{
 		HOST: '',
 		PORT: '3000',
-		DEFAULT_COOKIES_DOMAIN: 'cab432-sadykov-planner.com',		
+		DEFAULT_COOKIES_DOMAIN: 'cab432-cloudproject.com',		
 		WEBCAMS: {
-			appKey: 'umj4LLmXrnmshs0aRT86MMosAlHIp1WhH0Njsnz8WgKzEQEAyb'	
+			appKey: '3e83add325cbb69ac4d8e5bf433d770b'	
 		},
 		GOOGLE_MAPS_KEY: 'AIzaSyBXQROV5YMCERGIIuwxrmaZbBl_Wm4Dy5U'
 	}

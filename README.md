@@ -4,6 +4,11 @@ This Assignment contain second assignment for CAB432. Submission date set to *Mo
 
 It requires to design a sophisticated mashup that draws upon a set of publicly  vailable services.
 
+# Links usefull for this assignment
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-increase-availability.html
+
+
+
 ## Important Due Dates
 
 * **Week11 - Proposal** -  - *Tuesday, October 9th* - Send One Page to Jacob Marks *marksj@qut.edu.au*

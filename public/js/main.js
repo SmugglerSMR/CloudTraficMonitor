@@ -5,8 +5,9 @@
  * Overlay constructiing functions stored in Overlay.js  
  * 
  */
-
 // Initializing variables
+// // Load the binding
+
 var info = null;
 var country = null;
 var center = {};
@@ -92,7 +93,8 @@ function init_maps() {
 	};
 		
 	container = document.getElementById('map');	
-
+	// init();
+	// return
 	async.series([
 		// 
 		function(callback) {
@@ -182,7 +184,7 @@ function init_maps() {
 				}
 
 			});
-
+			
 			setTimeout( function() {
 				callback();
 			}, 500);	
@@ -190,21 +192,30 @@ function init_maps() {
 		// Calls Building Map		
 		function(callback) { 
 	
-			build_map();
-				
+			build_map(callback);		
+
 		},
+
+		// Create a load
+		// Calls Building Map		
+		function(callback) { 
+			console.log('Entering init');
+			init();
+				
+		}
 	
 	]);
 }	
+
 // ---------------------------------------------- 
 // Perform map building with series of async requests
 //    Marker/ City/ Webcam
 // ----------------------------------------------
 function build_map( callback ) {
-
+	console.log("Build Map 1");
 	async.series([
 		function(callback) { 
-		
+			console.log("Build Map 2");
 			info.main.marker =  new google.maps.Marker({
 				position: info.main.geometry,
 				map: map,
@@ -214,19 +225,20 @@ function build_map( callback ) {
 			callback();  
 		},
 		function(callback) {
-
+			console.log("Build Map 3");
 			show_cities( function(){
+				console.log("Build Map 4");
 				callback();
 			});
 
 		},
 		function(callback) { 
+			console.log("Build Map 5");
+			// if (info.main.webcams) {
 
-			if (info.main.webcams) {
-
-                info.main.overlay = set_map_webcams(new google.maps.
-                    LatLng(info.main.lat, info.main.lng), info.main.webcams, info.main.ps);	
-			}	
+            //     info.main.overlay = set_map_webcams(new google.maps.
+            //         LatLng(info.main.lat, info.main.lng), info.main.webcams, info.main.ps);	
+			// }	
 
 			callback();  
 		}	

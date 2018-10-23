@@ -129,11 +129,11 @@ function show_city( city, callback ) {
 				
 		function() { 
 
-			if (city.webcams && city.webcams.length>0) {
+			// if (city.webcams && city.webcams.length>0) {
 
-				city.overlay = set_map_webcams(new google.maps.LatLng(city.lat, city.lng), city.webcams, city.ps);	
+			// 	city.overlay = set_map_webcams(new google.maps.LatLng(city.lat, city.lng), city.webcams, city.ps);	
 
-			}	
+			// }	
 
 			callback();
 		}

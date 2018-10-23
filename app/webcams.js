@@ -5,7 +5,7 @@ var Config = require('./config');
 // --------------------------------------------------------------------
 exports.get = function(params, callback) {
 
-    var url = 'https://webcamstravel.p.mashape.com/webcams/list/';
+    var url = 'https://api.qldtraffic.qld.gov.au/v1/webcams';
     if ('limit' in params && params.limit) {
         url += 'limit='+params.limit + (params.offset ? ','+params.offset+'/' : '/');
     } 

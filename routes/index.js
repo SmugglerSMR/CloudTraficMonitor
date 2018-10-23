@@ -1,3 +1,7 @@
+// import * as tf from '@tensorflow/tfjs';
+// import * as tf_node from '@tensorflow/tfjs-node';
+
+
 var URL = require('url');
 var async = require('async');
 var config = require('../app/config');
@@ -8,17 +12,21 @@ var Webcams = require( '../app/webcams' );
 var MAIN_CITY = { 'name': 'brisbane', ps: 'right' };
 
 var CITY = [ 	{ name: 'Mackay',   ps: 'right' },
-				{ name: 'Townsvile', ps: 'bottom' },	
-				{ name: 'Mackay',   ps: 'top' },
-				{ name: 'Toowoomba',   ps: 'bottom' },
-				{ name: 'Gold Coast',   ps: 'right' },
-				{ name: 'Longreach',   ps: 'bottom' },
-				{ name: 'Mount Isa',   ps: 'bottom' },
-				{ name: 'Gladstone',   ps: 'right' },
-				{ name: 'Cairns',   ps: 'top' },
+				// { name: 'Townsvile', ps: 'bottom' },	
+				// { name: 'Mackay',   ps: 'top' },
+				// { name: 'Toowoomba',   ps: 'bottom' },
+				// { name: 'Gold Coast',   ps: 'right' },
+				// { name: 'Longreach',   ps: 'bottom' },
+				// { name: 'Mount Isa',   ps: 'bottom' },
+				// { name: 'Gladstone',   ps: 'right' },
+				// { name: 'Cairns',   ps: 'top' },
 				{ name: 'Birdsville',   ps: 'bottom' }
 			];  
 
+var tf = require("@tensorflow/tfjs");
+require('@tensorflow/tfjs-node');
+var util = tf.util;
+var tensor2d = tf.tensor2d
 
 exports.index = function (req, res) {
 
@@ -28,7 +36,8 @@ exports.index = function (req, res) {
 
 	var queryData = URL.parse(req.url, true).query;
 	var showId = queryData.showId ? queryData.showId : null;
-
+	init();
+	return;
 	async.series( [
 
 		function( chainCallback ){								
@@ -111,6 +120,24 @@ exports.index = function (req, res) {
 		}
 	]);
 };
+
+async function init() { 
+	
+	// Load the model.
+	console.log('Performing prediction: ');
+	const mobilenet = await tf.loadModel(
+		'https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json');
+
+		
+	//const model = await mobilenet.load();
+	var img = 'https://webcams.qldtraffic.qld.gov.au/Metropolitan/Archerfield_Ipswich_Mwy_sth.jpg'
+	// Classify the image.
+	const predictions = await mobilenet.classify(img);
+
+	console.log('Predictions: ');
+	console.log(predictions);
+		
+}
 
 function get_city(city, callback) {
 
