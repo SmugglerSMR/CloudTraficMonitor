@@ -21,11 +21,13 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-increase-availability.ht
 
 Project based of Week9 and Week10 exercises. This is separated repository from Report itself. It uses Overleaf environment. But pain from using JavaScript - uncomparable.
 
+WARNING: It is crutial to update Vode to latest version, canvac will not work due to error accured week ago.
 ## Prerequisites
 Node version:
 ```
+~$: nvm install 8.12.0
 ~$: node -v
-v8.11.1
+v8.12.0
 ```
 npm version:
 ```

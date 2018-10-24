@@ -41,6 +41,7 @@ app.use(express.static(__dirname + '/public'));
 // ============= API Routes
 app.get('/', indx.index );
 app.get('/api/webcams/id/:id/', readApi.webcams_id );
+app.get('/api/detect/', readApi.detect );
 
 app.get('/test', function(req, res) {
     res.sendFile(path.join(__dirname + '/routes/test.html'));

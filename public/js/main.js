@@ -21,8 +21,6 @@ var image_red, image_green;
 // Seting up Map
 google.maps.event.addDomListener(window, 'load', init_maps);
 
-USGSOverlay.prototype = new google.maps.OverlayView();
-
 geocoder = new google.maps.Geocoder();		
 
 $(document).ready(function(){
@@ -91,8 +89,8 @@ function init_maps() {
 		origin: new google.maps.Point(0, 0),    	
 		anchor: new google.maps.Point(12, 12)		
 	};
-	console.log('Getting detection: ' + info.main.detection);	
 	container = document.getElementById('map');		
+
 	async.series([
 		// 
 		function(callback) {
@@ -189,16 +187,22 @@ function init_maps() {
 		},		
 		// Create a load
 		// Receiving information from server.		
-		function(callback) { 
-			console.log('Getting detection: ' + info.main.detection);
-				
-		},
+		//function(callback) { 
+		//	console.log('Getting detection: ' + info.main.detection);
+		//		
+		//},
 		// Calls Building Map		
 		function(callback) { 
 	
 			build_map(callback);		
 
-		}		
+		},		
+		//        === Мы вначале все нарисуем, а потом запросим информацию о вебкамерах - иначе будет timeout з-за долгого ожидания
+		function(callback) { 
+			
+			load_webcams( callback );
+				
+		}
 	
 	]);
 }	
@@ -210,34 +214,24 @@ function init_maps() {
 //    Marker/ City/ Webcam
 // ----------------------------------------------
 function build_map( callback ) {
-	console.log("Build Map 1");
 	async.series([
-		function(callback) { 
-			console.log("Build Map 2");
+		function(cb) { 
 			info.main.marker =  new google.maps.Marker({
 				position: info.main.geometry,
 				map: map,
 				icon: image_red,
 			});	
 
-			callback();  
+			cb();  
 		},
-		function(callback) {
-			console.log("Build Map 3");
+		function(cb) {
 			show_cities( function(){
-				console.log("Build Map 4");
-				callback();
+				cb();
 			});
 
 		},
-		function(callback) { 
-			console.log("Build Map 5");
-			// if (info.main.webcams) {
-
-            //     info.main.overlay = set_map_webcams(new google.maps.
-            //         LatLng(info.main.lat, info.main.lng), info.main.webcams, info.main.ps);	
-			// }	
-
+		function(cb) { 
+			
 			callback();  
 		}	
 	]);
@@ -296,23 +290,19 @@ function set_map_webcams(coordinates, webcams, ps) {
 	}	
 }	
 
-// ---------------------------------------------- 
-// USGSOverlay constructor provided by Google API
-//    Support functions stored in overlay.js
-// ----------------------------------------------
-/** @constructor */
-function USGSOverlay(bounds, image, map) {
-	
-	// Now initialize all properties.
-	this.bounds_ = bounds;
-	this.image_ = image;
-	this.map_ = map;
 
-	// Define a property to hold the image's div. We'll
-	// actually create this div upon receipt of the onAdd()
-	// method so we'll leave it null for now.
-	this.div_ = null;
+function load_webcams( callback ) {
 
-	// Explicitly call setMap on this overlay
-	this.setMap(map);
+	console.log('load_webcams');
+
+	var url = '/api/detect/';
+	$.getJSON(url, function(rez){
+
+
+		console.log(rez);
+
+	});
+
+	callback();
+
 }

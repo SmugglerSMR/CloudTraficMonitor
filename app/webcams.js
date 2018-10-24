@@ -3,35 +3,75 @@ var request = require('request');
 var Config = require('./config');
 
 // --------------------------------------------------------------------
-exports.get = function(params, callback) {
+//  Reading performed from API of https://qldtraffic.qld.gov.au/index.html
+//
+exports.geojson = function(callback) {
 
-    var url = 'https://api.qldtraffic.qld.gov.au/v1/webcams';
-    if ('limit' in params && params.limit) {
-        url += 'limit='+params.limit + (params.offset ? ','+params.offset+'/' : '/');
-    } 
+    var opts = {  url:      'https://data.qldtraffic.qld.gov.au/events_v2.geojson',
+                  method:   'GET',
+                  json:     true,
+              };
+    var info = [];          
+    
+    request( opts, function (error, response, body){        
+        try {
+            if (!error) {
+                var features = body.features;
+                for (var i=0; i<features.length; i++) {
+                    info.push({ id:             features[i].properties.id,
+                                description:    features[i].properties.description, 
+                                geometry:       features[i].geometry.coordinates,
+                              });
+                }
+                callback(info);
+            }
+            else {
+                callback(null);
+            }
+        }
+        catch(ex) {
+            callback(null);
+        }
+    });
+}    
 
-    if (params.nearby)  url += 'nearby='+params.nearby;
-    else if (params.country)  url += 'country='+params.country;
-    else if (params.webcamId)  url += 'webcam='+params.webcamId;
+// --------------------------------------------------------------------
+exports.get = function(callback) {
 
-    url += '?lang=en';
-    if ('show' in params && params.show) {
-        url += '&show='+encodeURIComponent(params.show); 
-    } 
+    var url = 'https://api.qldtraffic.qld.gov.au/v1/webcams?apikey='+Config.WEBCAMS.appKey;
 
     var opts = {  url:      url,
-                method:   'GET',
-                json:     true,
-                headers:  {
-                    'X-Mashape-Key':  Config.WEBCAMS.appKey,
-                    'X-Mashape-Host': 'webcamstravel.p.mashape.com'
-                }
-            };
+                  method:   'GET',
+                  json:     true,
+              };
+
+    var info = [];          
 	
     request( opts, function (error, response, body){		
         try {
-            if (body.status == 'OK') {
-                callback(body.result);
+            if (!error) {
+                var features = body.features;
+                for (var i=0; i<features.length; i++) {
+
+                    if (features[i].type == 'Feature') {
+
+                        var x = {  geometry:    features[i].geometry.coordinates, 
+                                   id:          features[i].properties.id, 
+                                   url:         features[i].properties.url, 
+                                   description: features[i].properties.description, 
+                                   district:    features[i].properties.district, 
+                                   direction:   features[i].properties.direction, 
+                                   locality:    features[i].properties.locality, 
+                                   postcode:    features[i].properties.postcode, 
+                                   image_url:   features[i].properties.image_url, 
+                        };
+
+                        info.push(x);
+
+                    }
+                }
+
+                callback(info);
             }
             else {
                 callback(null);
@@ -42,6 +82,8 @@ exports.get = function(params, callback) {
         }
     });
 };
+
+
 
 // --------------------------------------------------------------------
 exports.show = function(rez) {
