@@ -10,10 +10,13 @@ var logger = require('morgan');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 
+var path = require('path');
 // ============= Setup
 var config = require('./app/config');
 var indx = require('./routes/index');
 var readApi = require('./routes/api');
+
+// var tf = require('@tensorflow/tfjs');
 
 var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || config.PORT;
 var host = process.env.OPENSHIFT_NODEJS_HOST || process.env.HOST || config.HOST;
@@ -33,11 +36,16 @@ app.set('view engine', 'ejs');
 
 
 app.use(express.static(__dirname + '/public'));
+// app.use('/tf', express.static(__dirname + '/node_modules/@tensorflow/tfjs/'));
 
 // ============= API Routes
 app.get('/', indx.index );
 app.get('/api/webcams/id/:id/', readApi.webcams_id );
+app.get('/api/detect/', readApi.detect );
 
+app.get('/test', function(req, res) {
+    res.sendFile(path.join(__dirname + '/routes/test.html'));
+});
 
 app.listen(port, function () {
     console.log('Express app listening at http://${host}:${port}/');

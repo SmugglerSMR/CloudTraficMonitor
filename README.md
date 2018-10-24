@@ -4,6 +4,11 @@ This Assignment contain second assignment for CAB432. Submission date set to *Mo
 
 It requires to design a sophisticated mashup that draws upon a set of publicly  vailable services.
 
+# Links usefull for this assignment
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-increase-availability.html
+
+
+
 ## Important Due Dates
 
 * **Week11 - Proposal** -  - *Tuesday, October 9th* - Send One Page to Jacob Marks *marksj@qut.edu.au*
@@ -16,11 +21,13 @@ It requires to design a sophisticated mashup that draws upon a set of publicly  
 
 Project based of Week9 and Week10 exercises. This is separated repository from Report itself. It uses Overleaf environment. But pain from using JavaScript - uncomparable.
 
+WARNING: It is crutial to update Vode to latest version, canvac will not work due to error accured week ago.
 ## Prerequisites
 Node version:
 ```
+~$: nvm install 8.12.0
 ~$: node -v
-v8.11.1
+v8.12.0
 ```
 npm version:
 ```

@@ -1,5 +1,29 @@
 // Overaly functions used in drawing with Map.
 
+USGSOverlay.prototype = new google.maps.OverlayView();
+
+
+// ---------------------------------------------- 
+// USGSOverlay constructor provided by Google API
+//    Support functions stored in overlay.js
+// ----------------------------------------------
+/** @constructor */
+function USGSOverlay(bounds, image, map) {
+	
+	// Now initialize all properties.
+	this.bounds_ = bounds;
+	this.image_ = image;
+	this.map_ = map;
+
+	// Define a property to hold the image's div. We'll
+	// actually create this div upon receipt of the onAdd()
+	// method so we'll leave it null for now.
+	this.div_ = null;
+
+	// Explicitly call setMap on this overlay
+	this.setMap(map);
+}
+
 /**
  * onAdd is called when the map's panes are ready and the overlay has been
  * added to the map.
