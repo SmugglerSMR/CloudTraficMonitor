@@ -68,6 +68,4 @@ function point2LatLng(point, map) {
 	var scale = Math.pow(2, map.getZoom());
 	var worldPoint = new google.maps.Point(point.x / scale + bottomLeft.x, point.y / scale + topRight.y);
 	return map.getProjection().fromPointToLatLng(worldPoint);
-}      
-
-
+}

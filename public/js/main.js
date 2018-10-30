@@ -290,19 +290,44 @@ function set_map_webcams(coordinates, webcams, ps) {
 	}	
 }	
 
-
 function load_webcams( callback ) {
-
 	console.log('load_webcams');
-
 	var url = '/api/detect/';
 	$.getJSON(url, function(rez){
-
-
+				if (rez.status == 'Ok') {
+					var webcams = rez.webcams;
+					for (var i=0; i<webcams.length; i++) {
+						var g = new google.maps.LatLng(webcams[i].geometry[1], 
+								webcams[i].geometry[0]);
+						set_map_count(g, webcams[i].count);	
+					}
+				}
 		console.log(rez);
-
 	});
-
 	callback();
-
 }
+
+// ---------------------
+function set_map_count(coordinates, count) {
+	//console.log('set_map_count', coordinates, count);
+	var point1 = latLng2Point(coordinates, map);		
+	point1.x = point1.x+15;
+	var coord1 = point2LatLng(point1, map);
+
+	point1.x = point1.x+30;
+	point1.y = point1.y+20;
+
+	var coord2 = point2LatLng(point1, map);
+	var bounds = new google.maps.LatLngBounds( coord1, coord2 );
+
+	var text = null;
+	if ( count ) {
+		if (count == -1) {
+			text = '?';
+		}
+		else {
+			text = count.toString();
+		}
+	}
+	var overlay = new USGSOverlay(bounds, null, map, text);
+}	

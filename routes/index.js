@@ -25,9 +25,9 @@ var CITY = [ 	{ name: 'Mackay',   ps: 'right' },
 
 var tf = require("@tensorflow/tfjs");
 require('@tensorflow/tfjs-node');
-global.fetch = require('node-fetch')
-var mobilenet = require('@tensorflow-models/mobilenet')
-var { createCanvas, Image } = require('canvas')
+global.fetch = require('node-fetch');
+var mobilenet = require('@tensorflow-models/mobilenet');
+var { createCanvas, Image } = require('canvas');
 
 var util = tf.util;
 var tensor2d = tf.tensor2d

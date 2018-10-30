@@ -24,6 +24,13 @@ var host = process.env.OPENSHIFT_NODEJS_HOST || process.env.HOST || config.HOST;
 var favicon = require('serve-favicon');
 app.use(favicon(__dirname + '/public/img/favicon.ico'));
 
+var io = require('socket.io')(server);
+require('./app/socket').init( io );
+
+server.listen(port);
+console.log('Express app listening at http://${host}:${port}/');
+
+
 // ============= Configuration Using Express 4
 app.use(logger('dev')) ;
 app.use(cookieParser());
@@ -47,13 +54,14 @@ app.get('/test', function(req, res) {
     res.sendFile(path.join(__dirname + '/routes/test.html'));
 });
 
-app.listen(port, function () {
-    console.log('Express app listening at http://${host}:${port}/');
-});
-
 app.use(function(req, res){
     res.status(404);
     console.log('Not found URL: ',req.url);
     res.send({ error: 'Not found' });
     return;
 });
+
+
+setTimeout( function(){
+	require('./app/webcams').init( );
+}, 500);	

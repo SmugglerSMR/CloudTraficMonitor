@@ -8,11 +8,12 @@ USGSOverlay.prototype = new google.maps.OverlayView();
 //    Support functions stored in overlay.js
 // ----------------------------------------------
 /** @constructor */
-function USGSOverlay(bounds, image, map) {
+function USGSOverlay(bounds, image, map, text) {
 	
 	// Now initialize all properties.
 	this.bounds_ = bounds;
 	this.image_ = image;
+	this.text_ = text || null;
 	this.map_ = map;
 
 	// Define a property to hold the image's div. We'll
@@ -32,15 +33,30 @@ USGSOverlay.prototype.onAdd = function() {
 	
 	var div = document.createElement('div');
 	div.style.border = 'solid';
-	div.style.borderWidth = '2px';
+	div.style.borderWidth = '1px';
+	div.style.borderColor = '#333';
 	div.style.position = 'absolute';
+	div.style.background = '#ccc';
+	div.style.padding = '2px';
+	div.style['text-align'] = 'center';
+	//span.setAttribute('style','background: #ccc; font-size: 14; font-weight: 600;')
 
-	// Create the img element and attach it to the div.
-	var img = document.createElement('img');
-	img.src = this.image_;
-	img.style.width = '100%';
-	img.style.height = '100%';
-	div.appendChild(img);
+	if (this.image_) {
+		// Create the img element and attach it to the div.
+		var img = document.createElement('img');
+		img.src = this.image_;
+		img.style.width = '100%';
+		img.style.height = '100%';
+		div.appendChild(img);
+	}
+	else if (this.text_) {
+		// Create the img element and attach it to the div.
+		var span = document.createElement('span');
+		span.setAttribute('style','font-size: 16px; font-weight: 600;')
+		span.textContent = this.text_;
+		div.appendChild(span);
+	}
+		
 
 	this.div_ = div;
 
@@ -51,7 +67,7 @@ USGSOverlay.prototype.onAdd = function() {
 
 USGSOverlay.prototype.draw = function() {
 
-	// Check image
+/*	// Check image
 	if(this.image_ === null) {
 		var div = this.div_;
 		div.style.left = '-50%';
@@ -61,7 +77,7 @@ USGSOverlay.prototype.draw = function() {
 		div.innerHTML='<div style="margin-top: 10px;">Change Main City.</div>';
 		
 		return;
-	} 	
+	} 	*/
 	// We use the south-west and north-east
 	// coordinates of the overlay to peg it to the correct position and size.
 	// To do this, we need to retrieve the projection from the overlay.
