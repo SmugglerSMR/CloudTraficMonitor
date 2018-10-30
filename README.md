@@ -35,6 +35,7 @@ npm version:
 6.4.0
 ```
 ### Installation
+sudo ./install-node_8.12.0.sh
 ```
 git clone https://github.com/SmugglerSMR/CAB432-assgn2.git
 cd CAB432-assgn2
