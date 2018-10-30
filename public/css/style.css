@@ -281,35 +281,50 @@
 } 
 .button-content {
 	position: fixed;
-	  z-index: 999;
-	  left: 10px;
-	  top: 70px;
-	  width: 118px;
-	  height: 20px;
-	  border: 1px solid #333;
-	  border-radius: 2px;
-	  padding: 10px 15px;	  
-	  background: #ccc;
+  z-index: 999;
+  left: 10px;
+  top: 70px;
+  width: 140px;
+  height: 24px;
+  border: 1px solid #333;
+  border-radius: 2px;
+  padding: 5px;	  
+  background: #ccc;
 	cursor: pointer;
-  }
-  .button-content span {
+}
+.button-content-label {
+  display: inline-block;
+  width: 50px;
+  font-size: 10px;
+}
+.button-content-input {
+  display: inline-block;
+  width: 40px;
+  vertical-align: top;
+}
+.button-content-action {
+  display: inline-block;
+  width: 35px;
+  vertical-align: top;
+}
+.button-content span {
   
-  }
-  .change-city-list {
+}
+.change-city-list {
 	margin: 30px 80px;
 	font-size: 16px;
-  }
-  .change-city-item {
+}
+.change-city-item {
 	display: block;
 	margin: 5px 0;
-  }
-  .change-city-item label {
+}
+.change-city-item label {
 	margin-left: 20px;
-  }  
-  .change-city-button {
+}  
+.change-city-button {
 	margin: 40px;
-  }
-  .submit-button {
+}
+.submit-button {
 	padding: 7px 16px 8px;
 	margin: 0;
 	font-size: 12.5px;
@@ -324,4 +339,4 @@
 	border: 0;
 	border-radius: 4px;
 	box-sizing: border-box
-  }  
+}  

@@ -76,6 +76,31 @@ function init_maps() {
 		info = JSON.parse(DeCode(config));
 	}
 	console.log(info);
+	console.log(count);
+	if (count) {
+		$('#count_webcams_input').val(count);
+	}
+	$('#count_webcams_submit').bind('click', function(){
+		var k = $('#count_webcams_input').val();
+		if (/^\d+$/.test(k)) {
+			count = parseInt(k);
+			var url = '/webcams/count/'+count+'/';
+			$.get( url, function( data ) {
+				console.log(data);
+
+				for (var i=0; i<elemOverlays.length; i++) 
+					elemOverlays[i].overlay.setMap(null);
+
+				load_webcams( function(){
+
+				});
+			});
+		}
+		else {
+			$('#count_webcams_input').val(count);		
+		}
+
+	});
 
 	image_red = {
 		url: '/img/circle_red_20x20.png',
@@ -115,7 +140,7 @@ function init_maps() {
 					info.main.lng = results[0].geometry.location.lng();
 					info.main.geometry = results[0].geometry.location;
 
-					console.log(info.main);
+					//console.log(info.main);
 					if (country) {						
 						callback();
 					}	
@@ -140,7 +165,7 @@ function init_maps() {
 		// Build city markers with coords
 		function(callback) { 
 
-			console.log(center);
+			//console.log(center);
 		
 			options = {
 				zoom: 6,	
@@ -276,7 +301,7 @@ function set_map_webcams(coordinates, webcams, ps) {
 
 		var overlay = new USGSOverlay(bounds, srcImage, map);
 
-		elemOverlays.push({
+		elemOverlays.push({ overlay: overlay,
 							webcamId: webcams[0].id,
 							webcamTitle: webcams[0].title,
 							webcamLocation: webcams[0].location,
@@ -298,11 +323,84 @@ function load_webcams( callback ) {
 	var url = '/api/detect/';
 	$.getJSON(url, function(rez){
 
+				console.log(rez);
+				if (rez.status == 'Ok') {
 
-		console.log(rez);
+					var webcams = rez.webcams;
+
+					for (var i=0; i<webcams.length; i++) {
+						set_map_count(webcams[i]);	
+					}
+				}
 
 	});
 
 	callback();
 
 }
+
+// ---------------------
+function set_map_count(webcam) {
+
+	//console.log('set_map_count', webcam);
+
+	for (var i=0; i<elemOverlays.length; i++) {
+
+		if ( elemOverlays[i].webcamId == webcam.id )  {
+
+			elemOverlays[i].overlay.setMap(null);
+
+			elemOverlays[i].overlay = _add(new google.maps.LatLng(webcam.geometry[1], webcam.geometry[0]), webcam.count).overlay;	
+
+			return;
+		}
+
+
+	}
+
+	var coordinates = new google.maps.LatLng(webcam.geometry[1], webcam.geometry[0]);
+	var count = webcam.count;
+
+	var x = _add(coordinates, count);
+
+	elemOverlays.push({ overlay: x.overlay,
+						webcamId: webcam.id,
+						webcamTitle: webcam.title,
+						webcamLocation: webcam.location,
+						coord1: x.coord1,
+						coord2: x.coord2
+					});
+
+	// ----------
+	function _add(coordinates, count) {
+
+		var point1 = latLng2Point(coordinates, map);
+			
+		point1.x = point1.x+15;
+
+		var coord1 = point2LatLng(point1, map);
+
+		point1.x = point1.x+30;
+		point1.y = point1.y+20;
+
+		var coord2 = point2LatLng(point1, map);
+
+		var bounds = new google.maps.LatLngBounds( coord1, coord2 );
+
+
+		var text = null;
+		if ( count ) {
+			if (count == -1) {
+				text = '?';
+			}
+			else {
+				text = count.toString();
+			}
+		}
+
+		var overlay = new USGSOverlay(bounds, null, map, text);
+
+		return {overlay: overlay, coord1: coord1, coord2: coord2};
+	}
+
+}	
