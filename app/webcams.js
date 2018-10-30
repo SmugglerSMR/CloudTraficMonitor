@@ -6,65 +6,97 @@ var sckt = require('./socket');
 
 var tf = require("@tensorflow/tfjs");
 require('@tensorflow/tfjs-node');
-global.fetch = require('node-fetch')
-var mobilenet = require('@tensorflow-models/mobilenet')
-var { createCanvas, Image } = require('canvas')
+//global.fetch = require('node-fetch');
+var mobilenet = require('@tensorflow-models/mobilenet');
+var { createCanvas, Image } = require('canvas');
 
 var util = tf.util;
 var tensor2d = tf.tensor2d
 
 
 var webcams = null;
-var count_webcams = 3;
+var count_webcams = 4;
 
 // --------------------------------------------------------------------
 //  Reading performed from API of https://qldtraffic.qld.gov.au/index.html
 //
 exports.init = function() {
+
     console.log('-- init webcams --');
+
     _run();
+
     // -------------------
     function _run() {
+
         read(function(){
+
                 setTimeout( function(){
                     _run();
-                }, 60000);    
+                }, 10000);    
+
         });
+
     }
+
+
 }    
-
 function read(callback) {
-    console.log('-- read webcams --');
-    load(function(error){
-        sckt.send({ 'event': 'webcams', 'webcams': webcams });
-        if (count_webcams < webcams.length) webcams.length = count_webcams;
-        console.log('---start--', webcams.length);
-        async.each(webcams, function(w, next) {
-                        readImage(w.image_url).then( input => {
-                                detect_prediction(input, function(predictions){
 
+    console.log('-- read webcams --', webcams ? webcams.length : '-');
+
+    load(function(error){
+
+
+        var k = count_webcams < webcams.length ? count_webcams : webcams.length;
+        console.log('---start--', k);
+
+        var ww = [];
+        for (var i=0; i<k; i++)  ww.push(webcams[i]);
+        sckt.send({ 'event': 'webcams', 'webcams': ww });
+
+        var j = 0;
+
+        async.each(ww, function(w, next) {
+
+                        readImage(w.image_url).then( input => {
+
+                            if (input) {                                
+                                detect_prediction(input, function(predictions){
                                     w.count = predictions[2].className.length;
-                                    //w.count = count_webcams;
-                                    sckt.send({ 'event': 'detect', 'webcam': w });
+                                    //w.count = ++j;
+
+                                    sckt.send({ 'event': 'detect', 'webcam': w });    
                                     next();
-                                });
+
+                                });                                
+                            }
+                            else {
+                                next();                                
+                            }
+
                         });
-                        //w.count = 3;
-                        //sckt.send({ 'action': 'detect', 'webcam': w });
-                        //next();
 
                     },  function(err) {
 
                         console.log('---finish--');
-                        sckt.send({ 'event': 'finish', 'webcams': webcams });
+
+                        sckt.send({ 'event': 'finish', 'webcams': ww });
+
                         callback();
+
                     });
+
     });
+
+
 }    
 
 // --------------------------------------------------------------------
 //  Считаем камеры
 function load(callback) {
+
+    console.log('-- load webcams -- api.qldtraffic.qld.gov.au --');
 
     var url = 'https://api.qldtraffic.qld.gov.au/v1/webcams?apikey='+Config.WEBCAMS.appKey;
 
@@ -77,10 +109,13 @@ function load(callback) {
     
     request( opts, function (error, response, body){        
         try {
+            console.log('-- load webcams -- ', error);
             if (!error) {
                 var features = body.features;
                 for (var i=0; i<features.length; i++) {
+
                     if (features[i].type == 'Feature') {
+
                         var x = {  geometry:    features[i].geometry.coordinates, 
                                    id:          features[i].properties.id, 
                                    url:         features[i].properties.url, 
@@ -92,9 +127,12 @@ function load(callback) {
                                    image_url:   features[i].properties.image_url, 
                                    count:       -1
                         };
+
                         webcams.push(x);
+
                     }
                 }
+
                 callback(false);
             }
             else {
@@ -105,6 +143,7 @@ function load(callback) {
             callback(true);
         }
     });
+
 }    
 exports.load = load;
 
@@ -145,17 +184,25 @@ exports.geojson = function(callback) {
 
 // --------------------------------------------------------------------
 exports.get = function(callback) {
+
     console.log('-- get --');
+
     if (webcams) {
-        callback(webcams);
+        var k = count_webcams < webcams.length ? count_webcams : webcams.length;
+        var ww = [];
+        for (var i=0; i<k; i++)  ww.push(webcams[i]);
+        callback(ww);
     }
     else {
         load(function(error){
-
-            callback(webcams);   
-
+            var k = count_webcams < webcams.length ? count_webcams : webcams.length;
+            var ww = [];
+            for (var i=0; i<k; i++)  ww.push(webcams[i]);
+            callback(ww);
         });   
     }
+
+
 };
 
 // --------------------------------------------------------------------
@@ -189,6 +236,11 @@ exports.set_count = function(newValue) {
 
     return oldValue;
 };
+// --------------------------------------------------------------------
+exports.get_count = function() {
+
+    return count_webcams;
+};
 
 
 
@@ -209,6 +261,10 @@ function readImage(url) {
             var input = tf.fromPixels(canvas);
             resolve(input);
         };  
+        img.onerror = () => {
+            console.error('-----ERROR readImage------')
+            resolve(null)
+        };  
     })
 
 }
@@ -219,9 +275,19 @@ async function detect_prediction(input, callback) {
     console.log('Performing prediction: ');
     var model = await mobilenet.load();     
 
+    // model.classify(input).then(predictions => {
+    //     console.log("Size of prediction "+predictions[2].className.length);
+    //     callback(predictions);
+    // });
+
+
     model.classify(input).then(predictions => {
         console.log("Size of prediction "+predictions[2].className.length);
         callback(predictions);
+    }).catch( (reason) => {
+            console.log('Handle rejected promise ('+reason+') here.');
+            callback(null);
     });
+
 
 }

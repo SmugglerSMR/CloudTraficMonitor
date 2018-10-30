@@ -29,6 +29,26 @@ function USGSOverlay(bounds, image, map, text) {
  * onAdd is called when the map's panes are ready and the overlay has been
  * added to the map.
  */
+/*USGSOverlay.prototype.onUpdate = function(params) {
+
+	console.log('--onUpdate--', params);
+
+	if ( params.text) {
+
+		this.text_ = '11';
+
+console.log(this);		
+
+		this.draw();
+
+	}
+
+}*/	
+
+/**
+ * onAdd is called when the map's panes are ready and the overlay has been
+ * added to the map.
+ */
 USGSOverlay.prototype.onAdd = function() {
 	
 	var div = document.createElement('div');
@@ -52,7 +72,7 @@ USGSOverlay.prototype.onAdd = function() {
 	else if (this.text_) {
 		// Create the img element and attach it to the div.
 		var span = document.createElement('span');
-		span.setAttribute('style','font-size: 16px; font-weight: 600;')
+		span.setAttribute('style','font-size: 16px; font-weight: 600;');
 		span.textContent = this.text_;
 		div.appendChild(span);
 	}

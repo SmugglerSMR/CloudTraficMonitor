@@ -2,8 +2,8 @@
 <head>
     <meta charset="utf-8">
     <title>CAB432 CloudProject</title>
-    <meta name="application-name" content="CAB432 assgn2">
-    <meta name="description" content="CloudProject">
+    <meta name="application-name" content="CAB432 assgn1">
+    <meta name="description" content="WeekendPlanner">
     <link rel="shortcut icon" href="/img/favicon.ico">
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/style.css">
@@ -24,6 +24,7 @@
 
 	<script type="text/javascript" id="data-config">
 	  	var config = "<%= config %>";
+	  	var count = "<%= count %>";
 	</script>
 
 </head>
@@ -32,6 +33,21 @@
 	<div class="page-content" id="map">
 
 	</div>
+
+	<div class="button-content" id="button-change-count">
+		<div class="button-content-label">
+			<span>Count webcams:</span>
+		</div>
+		<div class="button-content-input">
+			<input id="count_webcams_input" size="2" type="text">
+		</div>
+		<div class="button-content-action">
+			<button id="count_webcams_submit" type="button" >
+				<span>Ok</span>
+			</button>
+		</div>
+	</div>
+
 
 	<div id="modalfade"></div>
 	<div class="win-popup-message" id="msgPopup">

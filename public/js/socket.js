@@ -12,21 +12,21 @@ $(document).ready( function() {
 	socket = io(host_socket);
 	
     // ------------
-  	socket.on('connect', function () {
+	socket.on('connect', function () {
 
 		console.log('SOCKET connection:', socket.connected );
-        // --------------------- обработчик данных с сервера
-    	socket.on('message', function (msg) {
+		// --------------------- обработчик данных с сервера
+		socket.on('message', function (msg) {
 
-    		console.log(msg);
-		    if (msg.event == 'detect') {
+			console.log(msg);
+			if (msg.event == 'detect') {
 
 				var g = new google.maps.LatLng(msg.webcam.geometry[1], msg.webcam.geometry[0]);
 
-				set_map_count(g, msg.webcam.count);	
+				set_map_count(msg.webcam);	
 
-		    }	
-	    });
+			}	
+		});
 
 		// ------------
 		socket.on('disconnect', function () {
@@ -37,11 +37,11 @@ $(document).ready( function() {
 			//socket.json.send({ 'action': 'disconnect', 'user': user });
 		});
 		
-  	});
+	});
 	
 
-  	// ------------
-  	socket.json.send({ 'action': 'register', 'user': 'new user' });
+	// ------------
+	socket.json.send({ 'action': 'register', 'user': 'new user' });
 	
 });
 // -----------------------------------------------------------------------------

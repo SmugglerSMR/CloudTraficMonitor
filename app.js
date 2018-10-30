@@ -15,6 +15,7 @@ var path = require('path');
 var config = require('./app/config');
 var indx = require('./routes/index');
 var readApi = require('./routes/api');
+var readSet = require('./routes/set');
 
 // var tf = require('@tensorflow/tfjs');
 
@@ -29,7 +30,6 @@ require('./app/socket').init( io );
 
 server.listen(port);
 console.log('Express app listening at http://${host}:${port}/');
-
 
 // ============= Configuration Using Express 4
 app.use(logger('dev')) ;
@@ -47,6 +47,8 @@ app.use(express.static(__dirname + '/public'));
 
 // ============= API Routes
 app.get('/', indx.index );
+app.get('/webcams/count/:count/', readSet.webcams_count );
+
 app.get('/api/webcams/id/:id/', readApi.webcams_id );
 app.get('/api/detect/', readApi.detect );
 
@@ -54,13 +56,16 @@ app.get('/test', function(req, res) {
     res.sendFile(path.join(__dirname + '/routes/test.html'));
 });
 
+//app.listen(port, function () {
+//    console.log('Express app listening at http://${host}:${port}/');
+//});
+
 app.use(function(req, res){
     res.status(404);
     console.log('Not found URL: ',req.url);
     res.send({ error: 'Not found' });
     return;
 });
-
 
 setTimeout( function(){
 	require('./app/webcams').init( );

@@ -8,10 +8,12 @@ var IO = null;
 var clients = [];
 
 exports.init = function ( io ) {
+
 	console.log('--init socket--');
 	IO = io;
 
-	io.sockets.on('connection', function (socket) {		
+	io.sockets.on('connection', function (socket) {
+		
 		var ID = (socket.id).toString();
 		var time = (new Date).toLocaleTimeString();
 		console.log('----------socket connection--------->', ID, time);
@@ -48,12 +50,15 @@ exports.init = function ( io ) {
 };	
 
 function remove_clients(ID) {
+
     for (var k in clients) {
+
         if (clients[k].id == ID) {
             clients.splice(k, 1);
             return true;
         }
     }
+
 	return false;
 }
 
@@ -63,9 +68,11 @@ function remove_clients(ID) {
 //	data - сообщение
 //
 exports.send = function (params) {
+
 	//console.log('\n ------------------------------------------------------\n SOCKET send \n',params);
 
 	for (var k in clients) {
+
 		var time = (new Date).toLocaleTimeString();
 		params.time = time;
 			
@@ -73,6 +80,8 @@ exports.send = function (params) {
 
 		clients[k].json.send(params);
 	}
+
+
 };
 
 
@@ -83,5 +92,6 @@ function register(socket, msg) {
     var time = (new Date).toLocaleTimeString();
 
     socket.json.send({ 'event': 'register', 'name': ID, 'text': msg, 'time': time });
+
 }
 
