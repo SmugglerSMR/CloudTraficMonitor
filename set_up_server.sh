@@ -8,15 +8,15 @@ sudo apt update -y && sudo apt install -y \
     git
 
 
-curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt install -y nodejs
 
 npm install
 
 sudo npm install -g pm2
 
-pm2 start npm -- start
+sudo pm2 start npm -- start
 
-pm2 startup systemd
+sudo pm2 startup systemd
 
 sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu

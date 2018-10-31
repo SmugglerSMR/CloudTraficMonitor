@@ -69,7 +69,14 @@ Autoscaling group
 
 
 # Create Autoscaler Group
-1) Add intances. ANd connect with PEM key
+We created Instance, setp everything.
+When created image and set a new configuration from it.
+
+After performed all those steps before.
+
+1) Add intances. ANd connect with PEM key.
+Use Image for quich configuration launc.
+In autoScalingGroup select Advanced Details and Load Balancing. Choose Target manually.
 
 2)
 sudo apt install curl python-software-properties
