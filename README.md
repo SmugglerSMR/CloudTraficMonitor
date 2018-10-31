@@ -52,8 +52,33 @@ Run test script to visualise status of API
 npm test
 ```
 
-TO BE ADDED
-Load balancer
+## Additional steps and instructions taken.
+
+1) Creating an IAM role with ElasticLoadBalancing ROle.
+2) Add permision to intaller script
+3) Install make, python, gcc, g++
+4) nvm: curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+4) npm install aws-sdk
+5) Get API keys = 
+
+
+# Instance working
+Starting new instance.
+Crete load Balancer
+Autoscaling group
+
+
+# Create Autoscaler Group
+1) Add intances. ANd connect with PEM key
+
+2)
+sudo apt install curl python-software-properties
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install nodejs
+
+# Create new Load balancer
+
+
 
 ## Connecting.
 Project should be running now.
@@ -61,6 +86,12 @@ Check it on following adress:
 ```
 127.0.0.1:3000
 ```
+
+
+
+
+
+
 
 ## Built With
 
