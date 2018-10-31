@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt update -y && apt install -y \
+sudo apt update -y && sudo apt install -y \
     make \
     python \
     gcc \
@@ -9,7 +9,7 @@ sudo apt update -y && apt install -y \
 
 
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-sudo apt install nodejs
+sudo apt install -y nodejs
 
 npm install
 
