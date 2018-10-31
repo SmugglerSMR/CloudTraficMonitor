@@ -6,7 +6,7 @@ var sckt = require('./socket');
 
 var tf = require("@tensorflow/tfjs");
 require('@tensorflow/tfjs-node');
-//global.fetch = require('node-fetch');
+global.fetch = require('node-fetch');
 var mobilenet = require('@tensorflow-models/mobilenet');
 var { createCanvas, Image } = require('canvas');
 
@@ -69,7 +69,8 @@ function read(callback) {
                                     sckt.send({ 'event': 'detect', 'webcam': w });    
                                     next();
 
-                                });                                
+                                }); 
+                                                               
                             }
                             else {
                                 next();                                
