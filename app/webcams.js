@@ -36,7 +36,7 @@ exports.init = function() {
 
                 setTimeout( function(){
                     _run();
-                }, 60000);    
+                }, 15000);    
 
             })
 
