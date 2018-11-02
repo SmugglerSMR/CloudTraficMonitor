@@ -78,6 +78,7 @@ After performed all those steps before.
 Use Image for quich configuration launc.
 In autoScalingGroup select Advanced Details and Load Balancing. Choose Target manually.
 
+IMPORTANT! = Add ip adress of server as trusted to GoogleCloud
 2)
 sudo apt install curl python-software-properties
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -

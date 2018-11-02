@@ -13,6 +13,7 @@ var { createCanvas, Image } = require('canvas');
 var util = tf.util;
 var tensor2d = tf.tensor2d
 
+var Storage = require('./storage');
 
 var webcams = null;
 var count_webcams = 4;
@@ -31,16 +32,79 @@ exports.init = function() {
 
         read(function(){
 
+            detect( function(){
+
                 setTimeout( function(){
                     _run();
-                }, 10000);    
+                }, 60000);    
+
+            })
 
         });
 
     }
-
-
 }    
+
+function detect(callback) {
+
+    console.log('-- detect webcams --');
+
+    Storage.get_state( 1, function(items){
+
+        async.each(items, function(item, next) {
+
+                        detectImage(item, function(input){
+
+                            if (input) {                                
+
+                                detect_prediction(input, function(predictions){
+
+                                    if (predictions) {
+
+                                        item.count = predictions[2].className.length;
+                                        //w.count = ++j;
+                                        for (var i=0; i<webcams.length; i++) {
+                                            if (webcams[i].id == item.webcamId) {
+                                                webcams[i].count = item.count;
+                                                sckt.send({ 'event': 'detect', 'webcam': webcams[i] });            
+                                                break;
+                                            }
+                                        }
+
+                                        save_predictions( item.id, predictions, function(){        })
+
+                                        next();
+                                    }
+                                    else {
+                                        save_error( item.id, function(){        })                                            
+console.log('=========TIMEOUT============')                                        
+                                        next();
+                                    }    
+
+                                }); 
+                                                               
+                            }
+                            else {
+                                next();                                
+                            }
+
+                        });
+
+
+                    },  function(err) {
+
+                        console.log('---finish--load--');
+
+                        callback();
+
+
+                    });
+
+    });
+    
+}
+
+
 function read(callback) {
 
     console.log('-- read webcams --', webcams ? webcams.length : '-');
@@ -59,17 +123,24 @@ function read(callback) {
 
         async.each(ww, function(w, next) {
 
-                        readImage(w.image_url).then( input => {
+                        readImage(w.image_url).then( data => {
 
-                            if (input) {                                
-                                detect_prediction(input, function(predictions){
+                            if (data) {                                
+
+                                save_image( w.id, w.image_url, data, function(){
+
+                                    next();
+
+                                })
+
+/*                                detect_prediction(input, function(predictions){
                                     w.count = predictions[2].className.length;
                                     //w.count = ++j;
 
                                     sckt.send({ 'event': 'detect', 'webcam': w });    
                                     next();
 
-                                }); 
+                                }); */
                                                                
                             }
                             else {
@@ -80,11 +151,11 @@ function read(callback) {
 
                     },  function(err) {
 
-                        console.log('---finish--');
-
-                        sckt.send({ 'event': 'finish', 'webcams': ww });
+                        console.log('---finish--load--');
 
                         callback();
+
+                        //sckt.send({ 'event': 'read-', 'webcams': ww });
 
                     });
 
@@ -92,6 +163,33 @@ function read(callback) {
 
 
 }    
+
+// --------------------------------------------------------------------
+function save_image(webcamId, url, data, callback) {
+
+    Storage.add( { webcamId:  webcamId,
+                   imageUrl:  url,
+                   data:      data   
+                 }, callback);
+
+}
+
+// --------------------------------------------------------------------
+function save_predictions(id, predictions, callback) {
+
+    Storage.update( { id:        id,
+                      result:    predictions,
+                     }, callback);
+
+}
+
+// --------------------------------------------------------------------
+function save_error(id, callback) {
+
+    Storage.set_error( id, callback);
+
+}
+
 
 // --------------------------------------------------------------------
 //  Считаем камеры
@@ -247,7 +345,6 @@ exports.get_count = function() {
 
 // ================================================================
 
-// ---------------------
 function readImage(url) {
 
     console.log('--', url);
@@ -258,15 +355,34 @@ function readImage(url) {
     return new Promise(function(resolve, reject) {
         // Load the model.      
         img.onload = () => {
-            ctx.drawImage(img, 0, 0);       
-            var input = tf.fromPixels(canvas);
-            resolve(input);
+            ctx.drawImage(img, 0, 0); 
+            var data = canvas.toDataURL("image/png");
+            resolve(data);
         };  
         img.onerror = () => {
             console.error('-----ERROR readImage------')
             resolve(null)
         };  
     })
+
+}
+
+// --------------------------------------------------------------------
+function detectImage(item, callback) {
+
+    const canvas = createCanvas(299, 299);  
+    const ctx = canvas.getContext('2d');    
+    const img = new Image();    
+    img.onload = () => {
+            ctx.drawImage(img, 0, 0); 
+            var input = tf.fromPixels(canvas);
+            callback(input);
+    };  
+    img.onerror = () => {
+            console.error('-----ERROR readImage------')
+            callback(null)
+    };
+    img.src = item.data;
 
 }
 
@@ -282,12 +398,12 @@ async function detect_prediction(input, callback) {
     // });
 
 
-    model.classify(input).then(predictions => {
+    model.classify(input, 100.0).then(predictions => {
         console.log("Size of prediction "+predictions[2].className.length);
         callback(predictions);
     }).catch( (reason) => {
-            console.log('Handle rejected promise ('+reason+') here.');
-            callback(null);
+        console.log('Handle rejected promise ('+reason+') here.');
+        callback(null);
     });
 
 

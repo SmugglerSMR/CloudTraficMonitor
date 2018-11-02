@@ -7,7 +7,16 @@ var cfg = {
 		WEBCAMS: {
 			appKey: '3e83add325cbb69ac4d8e5bf433d770b'	
 		},
-		GOOGLE_MAPS_KEY: 'AIzaSyBXQROV5YMCERGIIuwxrmaZbBl_Wm4Dy5U'
+		GOOGLE_MAPS_KEY: 'AIzaSyBXQROV5YMCERGIIuwxrmaZbBl_Wm4Dy5U',
+		MYSQL:{
+			host: '35.189.44.222',
+			user: 'cab432_user',
+			password: 'dfsJhg1kywEri3uwr%e',
+			database: 'cab432',
+			connectionLimit: 50,
+			waitForConnections: true,
+            charset: 'utf8mb4',
+		}
 	},
 	'global':{
 		HOST: '',
@@ -16,7 +25,16 @@ var cfg = {
 		WEBCAMS: {
 			appKey: '3e83add325cbb69ac4d8e5bf433d770b'	
 		},
-		GOOGLE_MAPS_KEY: 'AIzaSyBXQROV5YMCERGIIuwxrmaZbBl_Wm4Dy5U'
+		GOOGLE_MAPS_KEY: 'AIzaSyBXQROV5YMCERGIIuwxrmaZbBl_Wm4Dy5U',
+		MYSQL:{
+			host: '35.189.44.222',
+			user: 'cab432_user',
+			password: 'dfsJhg1kywEri3uwr%e',
+			database: 'cab432',
+			connectionLimit: 50,
+			waitForConnections: true,
+            charset: 'utf8mb4',
+		}
 	}
 
 };
