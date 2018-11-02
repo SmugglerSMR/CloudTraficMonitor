@@ -4,6 +4,7 @@ sudo apt update -y && sudo apt install -y \
     python \
     gcc \
     g++ \
+    mc \
     curl \
     git
 
@@ -12,6 +13,10 @@ sudo curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt install -y nodejs
 
 npm install
+
+sudo rm -R node_modules
+
+npm isntall
 
 sudo npm install -g pm2
 
