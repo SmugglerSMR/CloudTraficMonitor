@@ -25,24 +25,25 @@ exports.init = function() {
 
     console.log('-- init webcams --');
 
-    _run();
+    // _run();
 
-    // -------------------
-    function _run() {
+    // // -------------------
+    // function _run() {
 
-        read(function(){
+    //     read(function(){
 
-            detect( function(){
+    //         detect( function(){
 
-                setTimeout( function(){
-                    _run();
-                }, 10000);    
+    //             setTimeout( function(){
+    //                 _run();
+    //             }, 10000);    
 
-            })
+    //         })
 
-        });
+    //     });
 
-    }
+    // }
+    read(function(){detect()});
 }    
 
 function detect(callback) {
