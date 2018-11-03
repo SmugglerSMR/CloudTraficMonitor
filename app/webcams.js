@@ -25,25 +25,25 @@ exports.init = function() {
 
     console.log('-- init webcams --');
 
-    // _run();
+    _run();
 
-    // // -------------------
-    // function _run() {
+    // -------------------
+    function _run() {
 
-    //     read(function(){
+        read(function(){
 
-    //         detect( function(){
+            detect( function(){
 
-    //             setTimeout( function(){
-    //                 _run();
-    //             }, 10000);    
+                setTimeout( function(){
+                    _run();
+                }, 10000);    
 
-    //         })
+            })
 
-    //     });
+        });
 
-    // }
-    read(function(){detect()});
+    }
+    
 }    
 
 function detect(callback) {
@@ -52,37 +52,39 @@ function detect(callback) {
 
     Storage.get_state( 1, function(items){
 
-        async.each(items, function(item, next) {
+        async.eachSeries(items, function(item, next) {
 
                         detectImage(item, function(input){
 
                             if (input) {                                
 
-                                detect_prediction(input, function(predictions){
+//                                 detect_prediction(input, function(predictions){
 
-                                    if (predictions) {
+//                                     if (predictions) {
 
-                                        item.count = predictions[2].className.length;
-                                        //w.count = ++j;
-                                        for (var i=0; i<webcams.length; i++) {
-                                            if (webcams[i].id == item.webcamId) {
-                                                webcams[i].count = item.count;
-                                                sckt.send({ 'event': 'detect', 'webcam': webcams[i] });            
-                                                break;
-                                            }
-                                        }
+//                                         item.count = predictions[2].className.length;
+//                                         //w.count = ++j;
+//                                         for (var i=0; i<webcams.length; i++) {
+//                                             if (webcams[i].id == item.webcamId) {
+//                                                 webcams[i].count = item.count;
+//                                                 sckt.send({ 'event': 'detect', 'webcam': webcams[i] });            
+//                                                 break;
+//                                             }
+//                                         }
 
-                                        save_predictions( item.id, predictions, function(){        })
+//                                         save_predictions( item.id, predictions, function(){        })
 
-                                        next();
-                                    }
-                                    else {
-                                        save_error( item.id, function(){        })                                            
-console.log('=========TIMEOUT============')                                        
-                                        next();
-                                    }    
+//                                         next();
+//                                     }
+//                                     else {
+//                                         save_error( item.id, function(){        })                                            
+// console.log('=========TIMEOUT============')                                        
+//                                         next();
+//                                     }    
 
-                                }); 
+//                                 }); 
+                            item.count = 1;
+                            next();
                                                                
                             }
                             else {
@@ -391,7 +393,7 @@ function detectImage(item, callback) {
 async function detect_prediction(input, callback) {     
 
     console.log('Performing prediction: ');
-    var model = await mobilenet.load();     
+    model = await mobilenet.load();     
 
     // model.classify(input).then(predictions => {
     //     console.log("Size of prediction "+predictions[2].className.length);

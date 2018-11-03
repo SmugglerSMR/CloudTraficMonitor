@@ -102,8 +102,7 @@ exports.set_error = function (id, callback) {
 
         connection.query( "UPDATE `images` SET `state` = 4 WHERE `id` IN = ?",
                 [ id ],
-                function( error, res ){
-                        console.log('--- images  state = 2 ---', list.join(','));
+                function( error, res ){                        
                         connection.release();
                         callback();
                 });  
