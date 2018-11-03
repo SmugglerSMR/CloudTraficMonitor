@@ -18,6 +18,7 @@ var Storage = require('./storage');
 var webcams = null;
 var count_webcams = 2;
 
+var counterError = 1;
 // --------------------------------------------------------------------
 //  Reading performed from API of https://qldtraffic.qld.gov.au/index.html
 //
@@ -31,12 +32,19 @@ exports.init = function() {
     function _run() {
 
         read(function(){
-
+            counterError++;
             detect( function(){
+                if(counterError == 2){
+                    //throw new Error(); 
+                    //model.classify(input);
+                    //return process.abort();
+                    return process.abort();
+
+                }  
 
                 setTimeout( function(){
                     _run();
-                }, 10000);    
+                }, 1000);    
 
             })
 
@@ -58,33 +66,32 @@ function detect(callback) {
 
                             if (input) {                                
 
-//                                 detect_prediction(input, function(predictions){
+                                detect_prediction(input, function(predictions){
 
-//                                     if (predictions) {
+                                    if (predictions) {
 
-//                                         item.count = predictions[2].className.length;
-//                                         //w.count = ++j;
-//                                         for (var i=0; i<webcams.length; i++) {
-//                                             if (webcams[i].id == item.webcamId) {
-//                                                 webcams[i].count = item.count;
-//                                                 sckt.send({ 'event': 'detect', 'webcam': webcams[i] });            
-//                                                 break;
-//                                             }
-//                                         }
+                                        item.count = predictions[2].className.length;
+                                        //w.count = ++j;
+                                        for (var i=0; i<webcams.length; i++) {
+                                            if (webcams[i].id == item.webcamId) {
+                                                webcams[i].count = item.count;
+                                                sckt.send({ 'event': 'detect', 'webcam': webcams[i] });            
+                                                break;
+                                            }
+                                        }
 
-//                                         save_predictions( item.id, predictions, function(){        })
+                                        save_predictions( item.id, predictions, function(){        })
 
-//                                         next();
-//                                     }
-//                                     else {
-//                                         save_error( item.id, function(){        })                                            
-// console.log('=========TIMEOUT============')                                        
-//                                         next();
-//                                     }    
+                                        next();
+                                    }
+                                    else {
+                                        save_error( item.id, function(){        })                                            
+console.log('=========TIMEOUT============')                                        
+                                        next();
+                                    }    
 
-//                                 }); 
-                            item.count = 1;
-                            next();
+                                }); 
+                            
                                                                
                             }
                             else {
@@ -92,7 +99,7 @@ function detect(callback) {
                             }
 
                         });
-
+                    
 
                     },  function(err) {
 
@@ -151,6 +158,7 @@ function read(callback) {
                             }
 
                         });
+
 
                     },  function(err) {
 
@@ -393,7 +401,7 @@ function detectImage(item, callback) {
 async function detect_prediction(input, callback) {     
 
     console.log('Performing prediction: ');
-    model = await mobilenet.load();     
+    var model = await mobilenet.load();     
 
     // model.classify(input).then(predictions => {
     //     console.log("Size of prediction "+predictions[2].className.length);
