@@ -1,16 +1,24 @@
 var async = require('async');
 var request = require('request');
 
-const childProcess = require('child_process');
-
 var Config = require('./config');
 var sckt = require('./socket');
+
+var tf = require("@tensorflow/tfjs");
+require('@tensorflow/tfjs-node');
+global.fetch = require('node-fetch');
+var mobilenet = require('@tensorflow-models/mobilenet');
+var { createCanvas, Image } = require('canvas');
+
+var util = tf.util;
+var tensor2d = tf.tensor2d
 
 var Storage = require('./storage');
 
 var webcams = null;
-var count_webcams = 4;
+var count_webcams = 2;
 
+var counterError = 1;
 // --------------------------------------------------------------------
 //  Reading performed from API of https://qldtraffic.qld.gov.au/index.html
 //
@@ -24,19 +32,87 @@ exports.init = function() {
     function _run() {
 
         read(function(){
-
+            counterError++;
             detect( function(){
+                if(counterError == 5){
+                    //throw new Error(); 
+                    //model.classify(input);
+                    //return process.abort();
+                    return process.abort();
+
+                }  
 
                 setTimeout( function(){
                     _run();
-                }, 10000);    
+                }, 1000);    
 
             })
 
         });
 
     }
+    
 }    
+
+function detect(callback) {
+
+    console.log('-- detect webcams --');
+
+    Storage.get_state( 1, function(items){
+
+        async.eachSeries(items, function(item, next) {
+
+                        detectImage(item, function(input){
+
+                            if (input) {                                
+
+                                detect_prediction(input, function(predictions){
+
+                                    if (predictions) {
+
+                                        item.count = predictions[2].className.length;
+                                        //w.count = ++j;
+                                        for (var i=0; i<webcams.length; i++) {
+                                            if (webcams[i].id == item.webcamId) {
+                                                webcams[i].count = item.count;
+                                                sckt.send({ 'event': 'detect', 'webcam': webcams[i] });            
+                                                break;
+                                            }
+                                        }
+
+                                        save_predictions( item.id, predictions, function(){        })
+
+                                        next();
+                                    }
+                                    else {
+                                        save_error( item.id, function(){        })                                            
+console.log('=========TIMEOUT============')                                        
+                                        next();
+                                    }    
+
+                                }); 
+                            
+                                                               
+                            }
+                            else {
+                                next();                                
+                            }
+
+                        });
+                    
+
+                    },  function(err) {
+
+                        console.log('---finish--load--');
+
+                        callback();
+
+
+                    });
+
+    });
+    
+}
 
 
 function read(callback) {
@@ -57,12 +133,25 @@ function read(callback) {
 
         async.each(ww, function(w, next) {
 
-                        readImage(w.image_url, function( data ){
+                        readImage(w.image_url).then( data => {
 
                             if (data) {                                
 
-                                save_image( w.id, w.image_url, data, next );
+                                save_image( w.id, w.image_url, data, function(){
 
+                                    next();
+
+                                })
+
+/*                                detect_prediction(input, function(predictions){
+                                    w.count = predictions[2].className.length;
+                                    //w.count = ++j;
+
+                                    sckt.send({ 'event': 'detect', 'webcam': w });    
+                                    next();
+
+                                }); */
+                                                               
                             }
                             else {
                                 next();                                
@@ -70,11 +159,14 @@ function read(callback) {
 
                         });
 
+
                     },  function(err) {
 
                         console.log('---finish--load--');
 
                         callback();
+
+                        //sckt.send({ 'event': 'read-', 'webcams': ww });
 
                     });
 
@@ -92,6 +184,23 @@ function save_image(webcamId, url, data, callback) {
                  }, callback);
 
 }
+
+// --------------------------------------------------------------------
+function save_predictions(id, predictions, callback) {
+
+    Storage.update( { id:        id,
+                      result:    predictions,
+                     }, callback);
+
+}
+
+// --------------------------------------------------------------------
+function save_error(id, callback) {
+
+    Storage.set_error( id, callback);
+
+}
+
 
 // --------------------------------------------------------------------
 //  Считаем камеры
@@ -243,68 +352,93 @@ exports.get_count = function() {
     return count_webcams;
 };
 
-// --------------------------------------------------------------------
-function save_error(id, callback) {
 
-    Storage.set_error( id, callback);
-
-}
 
 // ================================================================
 
-function readImage(url, callback) {
+function readImage(url) {
 
     console.log('--', url);
-
-    var request = require('request').defaults({ encoding: null });
-
-    request.get(url, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            data = "data:" + response.headers["content-type"] + ";base64," + new Buffer(body).toString('base64');
-            callback(data);
-        }
-        else {
-            callback(null);
-        }
-    });
-
-}
-
-
-function detect(callback) {
-
-    var child = childProcess.fork('child.js');
-
-    child.on('message', function(d) {
-        console.log(d);
-
-        if (d.error) {
-
-            if (d.message == 'timeout') {
-                save_error( d.id, function(){    console.log('-->set timeout', d.id);     }) 
-            }
-
-            return;    
-        }
-
-        for (var i=0; i<webcams.length; i++) {
-            if (webcams[i].id == d.webcamId) {
-                webcams[i].count = d.count;
-                sckt.send({ 'event': 'detect', 'webcam': webcams[i] });            
-                break;
-            }
-        }
-
-    });
-
-    child.on('exit', function (code, signal) {
-        console.log(`EXIT: with code ${code} and signal ${signal}`);
-        callback(code);
-    });    
-
-    child.on('error', (error) => {
-        console.log(error);
-    });
+    const canvas = createCanvas(299, 299);  
+    const ctx = canvas.getContext('2d');    
+    const img = new Image();    
+    img.src = url;
+    return new Promise(function(resolve, reject) {
+        // Load the model.      
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0); 
+            var data = canvas.toDataURL("image/png");
+            resolve(data);
+        };  
+        img.onerror = () => {
+            console.error('-----ERROR readImage------')
+            resolve(null)
+        };  
+    })
 
 }
 
+// --------------------------------------------------------------------
+function detectImage(item, callback) {
+
+    const canvas = createCanvas(299, 299);  
+    const ctx = canvas.getContext('2d');    
+    const img = new Image();    
+    img.onload = () => {
+            ctx.drawImage(img, 0, 0); 
+            var input = tf.fromPixels(canvas);
+            callback(input);
+    };  
+    img.onerror = () => {
+            console.error('-----ERROR readImage------')
+            callback(null)
+    };
+    img.src = item.data;
+
+}
+
+// ---------------------
+async function detect_prediction(input, callback) {     
+
+    console.log('Performing prediction on memory: ' + get_memory());
+    var model = await mobilenet.load();     
+
+    // model.classify(input).then(predictions => {
+    //     console.log("Size of prediction "+predictions[2].className.length);
+    //     callback(predictions);
+    // });
+
+
+    model.classify(input).then(predictions => {
+        console.log("Size of prediction "+predictions[2].className.length);
+        callback(predictions);
+    }).catch( (reason) => {
+        console.log('Handle rejected promise ('+reason+') here.');
+        callback(null);
+    });
+
+
+}
+
+function get_memory() {
+    var spawn = require('child_process').spawn;
+    var prc = spawn('free',  []);
+
+    var value = '';
+    
+    prc.stdout.setEncoding('utf8');
+    prc.stdout.on('data', function (data) {
+        var str = data.toString()
+        var lines = str.split(/\n/g);
+        for(var i = 0; i < lines.length; i++) {
+            lines[i] = lines[i].split(/\s+/);
+        }
+        console.log('your real memory usage is', lines[2][3]);
+        value = lines[2][3];
+    });
+
+    prc.on('close', function (code) {
+        console.log('process exit code ' + code);
+    });
+    return value;
+}
