@@ -154,7 +154,7 @@ async function detect_prediction(input, callback) {
     //     console.log("Size of prediction "+predictions[2].className.length);
     //     callback(predictions);
     // });
-    for(var i = 0; i < 10; i++) {
+    for(var i = 0; i < 100; i++) {
         model.classify(input).then(predictions => {
             //console.log("Size of prediction "+predictions[2].className.length);
         }).catch( (reason) => {
