@@ -34,7 +34,7 @@ exports.init = function() {
         read(function(){
             counterError++;
             detect( function(){
-                if(counterError == 2){
+                if(counterError == 5){
                     //throw new Error(); 
                     //model.classify(input);
                     //return process.abort();
