@@ -36,7 +36,7 @@ exports.init = function() {
 
                 setTimeout( function(){
                     _run();
-                }, 1000);    
+                }, 10000);    
 
             })
 
@@ -398,7 +398,7 @@ async function detect_prediction(input, callback) {
     // });
 
 
-    model.classify(input, 100.0).then(predictions => {
+    model.classify(input).then(predictions => {
         console.log("Size of prediction "+predictions[2].className.length);
         callback(predictions);
     }).catch( (reason) => {
