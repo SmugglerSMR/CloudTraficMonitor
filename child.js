@@ -32,7 +32,7 @@ function run( ) {
     Storage.get_state( 1, function(items){
 
 
-        async.each(items, function(item, next) {
+        async.eachSeries(items, function(item, next) {
 
                         detectImage(item, function(input){
 
