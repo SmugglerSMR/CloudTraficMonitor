@@ -16,7 +16,7 @@ var tensor2d = tf.tensor2d
 var Storage = require('./storage');
 
 var webcams = null;
-var count_webcams = 4;
+var count_webcams = 2;
 
 // --------------------------------------------------------------------
 //  Reading performed from API of https://qldtraffic.qld.gov.au/index.html

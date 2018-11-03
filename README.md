@@ -73,6 +73,7 @@ We created Instance, setp everything.
 When created image and set a new configuration from it.
 
 After performed all those steps before.
+cmod 775 set_up**
 
 1) Add intances. ANd connect with PEM key.
 Use Image for quich configuration launc.
