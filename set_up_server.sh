@@ -13,6 +13,10 @@ sudo apt install -y nodejs
 
 npm install
 
+sudo rm -R node_modules
+
+npm isntall
+
 sudo npm install -g pm2
 
 sudo pm2 start npm -- start
