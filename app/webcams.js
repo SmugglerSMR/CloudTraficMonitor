@@ -29,7 +29,7 @@ exports.init = function() {
 
                 setTimeout( function(){
                     _run();
-                }, 10000);    
+                }, 80000);    
 
             })
 

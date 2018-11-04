@@ -78,7 +78,7 @@ function run( ) {
 
                     });
 
-        var tt = 15000 * items.length;
+        var tt = 100000 * items.length;
 
         var run_timeout = setTimeout( function(){
 
