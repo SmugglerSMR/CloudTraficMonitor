@@ -28,8 +28,8 @@
     "@tensorflow-models/mobilenet": "^0.2.2",
     "@tensorflow/tfjs": "^0.13.3",
     "@tensorflow/tfjs-node": "^0.1.19",
-    "async": "^2.6.1",
-    "canvas": "^2.0.1",
+    "async": "^2.6.4",
+    "canvas": "^2.10.1",
     "connect": "^3.6.6",
     "cookie-parser": "^1.4.3",
     "cookie-sessions": "0.0.2",
@@ -38,13 +38,13 @@
     "express-session": "^1.15.6",
     "morgan": "^1.9.0",
     "mysql": "^2.16.0",
-    "node-fetch": "^2.2.0",
+    "node-fetch": "^2.6.7",
     "pm2": "^3.2.2",
     "pngjs-image": "^0.11.7",
     "request": "^2.88.0",
     "serve-favicon": "^2.5.0",
-    "socket.io": "^2.1.1",
-    "underscore": "^1.9.1"
+    "socket.io": "^2.5.0",
+    "underscore": "^1.13.6"
   },
   "devDependencies": {}
 }
